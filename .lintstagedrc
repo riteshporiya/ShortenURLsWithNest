@@ -1,0 +1,5 @@
+{
+  "!(.prettierignore)*": "npm run prettier:format",
+  "*.js": "npm run lint",
+  "*.ts": "npm run lint"
+}
