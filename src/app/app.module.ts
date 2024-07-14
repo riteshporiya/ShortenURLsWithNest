@@ -8,6 +8,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpModule as HttpClientModule } from '@nestjs/axios';
 import { LoggingInterceptor } from './logger/logging.interceptor';
 import { RestModule } from './rest/rest.module';
+import { RateLimiterInterceptor } from './rate-limiter/rate-limiter.interceptor';
+import { RateLimiterModule } from './rate-limiter/rate-limiter.module';
 
 const envFilePath = path.resolve(__dirname, '../../../.env');
 
@@ -26,6 +28,7 @@ const envFilePath = path.resolve(__dirname, '../../../.env');
     BootStrapModule,
     HttpClientModule,
     RestModule,
+    RateLimiterModule,
   ],
   controllers: [],
   providers: [
@@ -33,6 +36,10 @@ const envFilePath = path.resolve(__dirname, '../../../.env');
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: RateLimiterInterceptor,
     },
   ],
 })

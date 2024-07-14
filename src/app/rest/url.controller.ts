@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Post, Redirect } from '@nestjs/common';
 import { UrlService } from '../url/url.service';
 import { UrlReqDto } from './dtos/requests';
 import { UrlMapper } from './mappers';
+import { RateLimit } from '../rate-limiter/decorator/rate-limit.decorator';
 
 @Controller('url')
 export class UrlController {
@@ -15,6 +16,7 @@ export class UrlController {
   }
 
   @Get(':shortKey')
+  @RateLimit(10, 1 * 60 * 1000) // 100 requests per minute
   @Redirect()
   async redirectToOriginalUrl(@Param('shortKey') shortKey: string) {
     const originalUrl = await this.urlService.getOriginalUrl(shortKey);
