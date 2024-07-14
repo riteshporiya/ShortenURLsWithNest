@@ -1,11 +1,15 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { postgresConfig } from './config';
 import * as path from 'path';
 import { DbModule } from './db/db.module';
 import { BootStrapModule } from './bootstrap/bootstrap.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { HttpModule as HttpClientModule } from '@nestjs/axios';
+import { LoggingInterceptor } from './logger/logging.interceptor';
+import { RestModule } from './rest/rest.module';
 
-const envFilePath = path.resolve(__dirname, '../../.env');
+const envFilePath = path.resolve(__dirname, '../../../.env');
 
 @Module({
   imports: [
@@ -20,8 +24,16 @@ const envFilePath = path.resolve(__dirname, '../../.env');
       load: [postgresConfig],
     }),
     BootStrapModule,
+    HttpClientModule,
+    RestModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    Logger,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+  ],
 })
 export class AppModule {}
